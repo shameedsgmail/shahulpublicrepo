@@ -1,0 +1,21 @@
+on: [push]
+
+name: GetADLData
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log in with Azure
+        uses: azure/login@v1
+        with:
+          creds: '${{ secrets.Azure_Key }}'
+          enable-AzPSSession: true
+      - name: Azure PowerShell Action
+        uses: Azure/powershell@v1
+        with:
+          inlineScript: |
+            $ctx = New-AzStorageContext -StorageAccountName "srhdseuwstdsa"
+            Get-AzStorageBlobContent -Blob "SHTEST5/Temp/Reports-01.csv" -Container "dropzone" -Destination $HOME -Context $ctx.Context
+            ls $HOME
+          azPSVersion: 3.1.0
